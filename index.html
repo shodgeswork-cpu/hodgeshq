@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Hodges HQ</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F7F4EE;--surface:#FFF;--surface2:#F0EDE6;--surface3:#E8E4DC;
+  --border:#E2DDD4;--accent:#1C3D5A;--accent2:#2E6B9E;
+  --green:#2E7D4F;--green-bg:#EAF4EE;--green-bd:#B8DEC5;
+  --amber:#B05E00;--amber-bg:#FEF3E2;--amber-bd:#F5C67A;
+  --purple:#5B3FA0;--purple-bg:#EFECFB;
+  --red:#C0392B;--red-bg:#FDECEA;
+  --text:#1A1A1A;--text2:#4A4A4A;--text3:#888;--text4:#BBB;
+  --r:14px;--rs:9px;--rxs:6px;
+  --sh:0 1px 4px rgba(0,0,0,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:20px}
+
+/* TOPBAR */
+.topbar{background:var(--accent);padding:12px 15px 0;position:sticky;top:0;z-index:200}
+.tr1{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.app-title{font-family:'DM Serif Display',serif;font-size:21px;color:#fff;letter-spacing:1.5px}
+.sync-pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);border-radius:100px;padding:4px 10px}
+.sdot{width:7px;height:7px;border-radius:50%;background:#4CAF50;flex-shrink:0}
+.sdot.sy{background:#FFC107;animation:pulse 1s infinite}.sdot.er{background:#ef5350}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.stext{font-size:10px;color:rgba(255,255,255,.65);font-weight:500}
+.tr2{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.who-lbl{font-size:10px;color:rgba(255,255,255,.5)}
+.who-tgl{display:flex;border-radius:100px;overflow:hidden;border:1px solid rgba(255,255,255,.2)}
+.who-btn{padding:4px 13px;font-size:11px;font-weight:600;border:none;cursor:pointer;background:rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;transition:all .15s}
+.who-btn.active{background:#fff;color:var(--accent)}
+.tabs{display:flex;background:var(--accent);padding:0 15px 11px;gap:4px;position:sticky;top:88px;z-index:199}
+.tab{flex:1;padding:7px 2px;border-radius:var(--rs);border:none;background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.2px}
+.tab.active{background:#fff;color:var(--accent)}
+.pg{padding:11px 13px;display:none}.pg.active{display:block}
+
+/* TALLY BAR */
+.tally-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:11px}
+.tc{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rs);padding:10px 8px 8px;text-align:center;box-shadow:var(--sh)}
+.tc-name{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px}
+.tc-num{font-family:'DM Serif Display',serif;font-size:30px;line-height:1;color:var(--accent)}
+.tc-num.j{color:var(--amber)}.tc-sub{font-size:8px;color:var(--text4);margin-top:2px}
+.tc-next{font-size:9px;color:var(--green);font-weight:600;margin-top:3px;min-height:13px}
+
+/* SECTION HDR */
+.sh{font-size:9.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px}
+
+/* GIG CARD */
+.gc{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden;box-shadow:var(--sh);transition:border-color .3s,background .3s}
+.gc.flash{border-color:var(--green);background:var(--green-bg);animation:flin .4s ease}
+@keyframes flin{0%{transform:scale(1)}50%{transform:scale(1.015)}100%{transform:scale(1)}}
+.gc-top{padding:11px 12px 10px;display:flex;align-items:flex-start;gap:9px}
+.gc-info{flex:1;min-width:0}
+.gc-name{font-size:12.5px;font-weight:600;line-height:1.4;color:var(--text);margin-bottom:5px}
+.gc-tags{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.who{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:100px}
+.wz{background:#DEEAF1;color:#0C447C}.wt{background:var(--purple-bg);color:var(--purple)}
+.wb{background:var(--green-bg);color:var(--green)}.wj{background:var(--amber-bg);color:var(--amber)}
+.tv{font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:100px;background:var(--surface2);color:var(--text2);border:0.5px solid var(--border)}
+.exp-btn{background:none;border:none;cursor:pointer;color:var(--text4);font-size:18px;flex-shrink:0;transition:transform .2s;line-height:1;padding:2px 0 0}
+.gc.open .exp-btn{transform:rotate(180deg)}
+.gc-ctr{padding:0 12px 11px}
+.ctr-row{display:flex;align-items:center;gap:8px}
+.mbtn,.pbtn{width:36px;height:36px;border-radius:50%;border:1.5px solid;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:22px;font-weight:300;transition:all .15s;line-height:1;font-family:'DM Sans',sans-serif;-webkit-user-select:none;user-select:none}
+.mbtn{border-color:var(--border);background:var(--surface2);color:var(--text3)}
+.pbtn{border-color:var(--accent2);color:var(--accent2);background:rgba(46,107,158,.07)}
+.mbtn:active,.pbtn:active{transform:scale(.88)}
+.pbtn:active{background:rgba(46,107,158,.15)}
+.dots-wrap{flex:1;display:flex;justify-content:center;align-items:center;gap:5px;flex-wrap:wrap;min-height:26px}
+.dot{width:21px;height:21px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface2);transition:all .2s;flex-shrink:0}
+.dot.filled{background:var(--accent2);border-color:var(--accent2)}.dot.done{background:var(--green);border-color:var(--green)}
+.bar-wrap{flex:1}
+.bar-bg{background:var(--surface2);border-radius:100px;height:6px;overflow:hidden;border:0.5px solid var(--border);margin-bottom:4px}
+.bar-fill{height:100%;background:var(--accent2);border-radius:100px;transition:width .3s}
+.bar-lbl{font-size:10px;color:var(--text3);text-align:right}.bar-lbl.done{color:var(--green);font-weight:600}
+.inst-row{flex:1;text-align:center}.inst-lbl{font-size:10px;color:var(--green);font-weight:600}
+.gc-detail{display:none;border-top:0.5px solid var(--border);padding:10px 12px 12px;background:var(--surface2)}
+.gc.open .gc-detail{display:block}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.dc{background:rgba(255,255,255,.8);border-radius:7px;padding:7px 9px}
+.dl{font-size:8px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px}
+.dv{font-size:11px;color:var(--text2);line-height:1.6}.dv b{color:var(--text);font-weight:600}
+
+/* STANDARDS */
+.std-person{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;box-shadow:var(--sh)}
+.std-head{padding:12px 14px 10px;display:flex;justify-content:space-between;align-items:center}
+.std-name{font-size:13px;font-weight:700;color:var(--text)}
+.std-status{font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;transition:all .3s}
+.std-status.met{background:var(--green-bg);color:var(--green)}
+.std-status.unmet{background:var(--surface2);color:var(--text3)}
+.std-items{padding:0 14px 12px}
+.std-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);cursor:pointer;-webkit-user-select:none;user-select:none}
+.std-item:last-child{border-bottom:none}
+.std-item:active{background:rgba(0,0,0,.02)}
+.std-check{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+.std-check.ticked{background:var(--green);border-color:var(--green)}
+.std-check-icon{font-size:12px;color:#fff;display:none}
+.std-check.ticked .std-check-icon{display:block}
+.std-text{font-size:12.5px;color:var(--text2);line-height:1.5;flex:1}
+.std-text.done{color:var(--text3);text-decoration:line-through}
+.std-note{font-size:10px;color:var(--text3);margin-top:1px;line-height:1.4}
+
+/* WEEKLY TRACKER */
+.wt-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:10px;box-shadow:var(--sh)}
+.wt-title{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.wt-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.wt-row:last-child{margin-bottom:0}
+.wt-name{font-size:12px;font-weight:600;width:44px;flex-shrink:0}
+.wt-days{display:flex;gap:5px;flex:1}
+.wt-day{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.wt-day-lbl{font-size:8.5px;color:var(--text3);font-weight:600}
+.wt-box{width:100%;height:28px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all .2s;-webkit-user-select:none;user-select:none}
+.wt-box.met{background:var(--green);border-color:var(--green)}
+.wt-summary{margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)}
+.wt-summary-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12px}
+.wt-summary-name{color:var(--text2);font-weight:500}
+.wt-summary-val{font-weight:700;color:var(--accent)}
+.wt-unlock{font-size:11px;color:var(--green);font-weight:600;margin-top:2px}
+
+/* RESET + DAY BUTTONS */
+.day-actions{display:flex;gap:8px;margin-bottom:12px}
+.day-btn{flex:1;padding:11px;border-radius:var(--rs);border:0.5px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;text-align:center;box-shadow:var(--sh);transition:all .15s}
+.day-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.day-btn.danger{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.day-btn:active{transform:scale(.97)}
+
+/* NOTE */
+.nb{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px;box-shadow:var(--sh)}
+.nb-title{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:7px}
+textarea{width:100%;background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--rs);padding:9px 11px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);resize:none;min-height:70px;outline:none;line-height:1.6}
+textarea:focus{border-color:var(--accent2)}textarea::placeholder{color:var(--text4)}
+
+/* VAULT */
+.vc{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:8px;box-shadow:var(--sh)}
+.vn{font-size:13px;font-weight:700;margin-bottom:8px}
+.vgr{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.vgl{font-size:10px;color:var(--text3);min-width:45px;font-weight:500}
+.vgi{flex:1;background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--rxs);padding:6px 9px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none}
+.vgi:focus{border-color:var(--accent2)}
+.vp-bg{background:var(--surface2);border-radius:100px;height:6px;overflow:hidden;margin:4px 0 3px}
+.vp-fill{height:100%;background:var(--green);border-radius:100px;transition:width .5s}
+.vp-txt{font-size:9px;color:var(--text3);text-align:right}.vp-nxt{font-size:10px;font-weight:600;margin-top:2px}
+.tl{font-size:8.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin:9px 0 4px}
+.ti{font-size:11.5px;color:var(--text2);padding:2.5px 0 2.5px 12px;position:relative;line-height:1.5}
+.ti::before{content:"›";position:absolute;left:2px;color:var(--text4)}
+.cash-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}
+.cash-btn{background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--rs);padding:10px 6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;text-align:center;transition:background .15s}
+.cash-btn:active{background:var(--surface3)}.cash-btn.wide{grid-column:1/-1}
+
+/* LOG */
+.log-row{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rs);padding:10px 12px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;box-shadow:var(--sh)}
+.lr-name{font-size:12px;font-weight:600;line-height:1.4}.lr-meta{font-size:10px;color:var(--text3);margin-top:2px}
+.lr-badge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap;flex-shrink:0}
+.lr-badge.pos{color:var(--green);background:var(--green-bg)}.lr-badge.neg{color:var(--red);background:var(--red-bg)}.lr-badge.sm{color:var(--amber);background:var(--amber-bg)}
+.empty{text-align:center;padding:50px 20px;color:var(--text3);font-size:13px;line-height:1.8}
+
+/* GUIDE */
+.gcard{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:8px;box-shadow:var(--sh)}
+.gtitle{font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px}
+.gtext{font-size:11.5px;color:var(--text2);line-height:1.85}.gtext b{color:var(--text);font-weight:600}
+.gtext p{margin-bottom:5px}.gtext p:last-child{margin-bottom:0}
+.ref-row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:0.5px solid var(--border);font-size:11px}
+.ref-row:last-child{border-bottom:none}.ref-name{color:var(--text2);flex:1}.ref-val{color:var(--accent);font-weight:700;font-size:10px;white-space:nowrap;margin-left:8px}
+
+/* FIREBASE BANNER */
+.fbanner{background:var(--amber-bg);border:1px solid var(--amber-bd);border-radius:var(--rs);padding:10px 13px;margin-bottom:10px;font-size:11.5px;color:var(--amber);line-height:1.6}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--accent);color:#fff;font-size:12px;font-weight:500;padding:9px 18px;border-radius:100px;opacity:0;transition:all .25s;pointer-events:none;z-index:9999;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9000;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:var(--surface);border-radius:18px 18px 0 0;padding:20px 18px 40px;width:100%;max-width:480px}
+.modal-title{font-size:14px;font-weight:700;margin-bottom:6px}.modal-msg{font-size:12.5px;color:var(--text2);line-height:1.6;margin-bottom:18px}
+.modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modal-btn{padding:12px;border-radius:var(--rs);border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.modal-cancel{background:var(--surface2);color:var(--text2)}.modal-confirm{background:var(--accent);color:#fff}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tr1">
+    <div class="app-title">HODGES HQ</div>
+    <div class="sync-pill"><div class="sdot" id="sdot"></div><span class="stext" id="stxt">Connecting…</span></div>
+  </div>
+  <div class="tr2">
+    <div class="who-lbl">Logging as:</div>
+    <div class="who-tgl">
+      <button class="who-btn active" id="wm" onclick="setWho('Mum')">Mum</button>
+      <button class="who-btn" id="wd" onclick="setWho('Dad')">Dad</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('today',this)">Gigs</button>
+    <button class="tab" onclick="showTab('standards',this)">Standards</button>
+    <button class="tab" onclick="showTab('vault',this)">Vault</button>
+    <button class="tab" onclick="showTab('log',this)">Log</button>
+    <button class="tab" onclick="showTab('guide',this)">Guide</button>
+  </div>
+</div>
+
+<!-- ═══ TODAY TAB ═══ -->
+<div id="tab-today" class="pg active">
+  <div id="fbanner" class="fbanner" style="display:none"><b>⚡ Firebase not connected.</b> Saving locally only. See Guide tab to connect Firebase for syncing between phones.</div>
+
+  <div class="tally-bar" style="grid-template-columns:1fr 1fr">
+    <div class="tc"><div class="tc-name">Zeke</div><div class="tc-num" id="tcz">0</div><div class="tc-sub">tallies</div><div class="tc-next" id="tnz"></div></div>
+    <div class="tc"><div class="tc-name">Tilly</div><div class="tc-num" id="tct">0</div><div class="tc-sub">tallies</div><div class="tc-next" id="tnt"></div></div>
+  </div>
+
+  <div class="sh">Routine Gigs</div>
+
+  <div class="gc" id="gc-r1z">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Morning routine without arguments</div><div class="gc-tags"><span class="who wz">Zeke</span><span class="tv">5 tallies at 5 days</span></div></div><button class="exp-btn" onclick="exp('r1z')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('r1z')">−</button><div class="dots-wrap" id="dw-r1z"></div><button class="pbtn" onclick="add('r1z')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">All morning standards done, left on time, <b>no arguing, no rushing siblings, no repeated timing questions.</b></div></div>
+      <div class="dc"><div class="dl">What doesn't count</div><div class="dv">Any arguing, rushing siblings, repeated timing questions = don't tap that day. Slow but silent = still counts.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>5 tallies</b> for Zeke when 5 days reached. Carries over.</div></div>
+      <div class="dc"><div class="dl">How to track</div><div class="dv">Mum taps + each clean morning for Zeke. Dad reviews at Friday dinner check-in.</div></div>
+    </div></div>
+  </div>
+  <div class="gc" id="gc-r1t">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Morning routine without arguments</div><div class="gc-tags"><span class="who wt">Tilly</span><span class="tv">5 tallies at 5 days</span></div></div><button class="exp-btn" onclick="exp('r1t')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('r1t')">−</button><div class="dots-wrap" id="dw-r1t"></div><button class="pbtn" onclick="add('r1t')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">All morning standards done, left on time, <b>no arguing, no rushing siblings, no repeated timing questions.</b></div></div>
+      <div class="dc"><div class="dl">What doesn't count</div><div class="dv">Any arguing, rushing siblings, repeated timing questions = don't tap that day. Slow but silent = still counts.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>5 tallies</b> for Tilly when 5 days reached. Carries over.</div></div>
+      <div class="dc"><div class="dl">How to track</div><div class="dv">Mum taps + each clean morning for Tilly. Dad reviews at Friday dinner check-in.</div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-r2">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Sport gear to room on arrival — no reminders</div><div class="gc-tags"><span class="who wz">Zeke</span><span class="tv">3 tallies at 5 arrivals</span></div></div><button class="exp-btn" onclick="exp('r2')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('r2')">−</button><div class="dots-wrap" id="dw-r2"></div><button class="pbtn" onclick="add('r2')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">Gear goes to room <b>before sitting down, before screens</b> — without being asked. Every sport arrival.</div></div>
+      <div class="dc"><div class="dl">What doesn't count</div><div class="dv">Gear left anywhere. If asked to move it = doesn't count. Missed arrivals pause — no reset.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>3 tallies</b> when 5 successful arrivals reached. Carries over.</div></div>
+      <div class="dc"><div class="dl">How to track</div><div class="dv">Mum taps + each time he arrives and puts gear away without being asked.</div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-r3z">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">After-dinner reset without being asked</div><div class="gc-tags"><span class="who wz">Zeke</span><span class="tv">1 tally — instant each time</span></div></div><button class="exp-btn" onclick="exp('r3z')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" style="visibility:hidden">−</button><div class="inst-row"></div><button class="pbtn" onclick="ci('r3z')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">Zeke starts reset job <b>without being asked</b> — before a parent says anything.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>1 tally immediately</b> for Zeke each time. Instant — no target.</div></div>
+    </div></div>
+  </div>
+  <div class="gc" id="gc-r3t">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">After-dinner reset without being asked</div><div class="gc-tags"><span class="who wt">Tilly</span><span class="tv">1 tally — instant each time</span></div></div><button class="exp-btn" onclick="exp('r3t')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" style="visibility:hidden">−</button><div class="inst-row"></div><button class="pbtn" onclick="ci('r3t')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">Tilly starts reset job <b>without being asked</b> — before a parent says anything.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>1 tally immediately</b> for Tilly each time. Instant — no target.</div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-r4z">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Dinner without complaining</div><div class="gc-tags"><span class="who wz">Zeke</span><span class="tv">3 tallies at 7 dinners</span></div></div><button class="exp-btn" onclick="exp('r4z')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('r4z')">−</button><div class="bar-wrap" id="dw-r4z"></div><button class="pbtn" onclick="add('r4z')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">Zeke eats without complaining. Silent unhappiness = counts. Asking politely for less = counts.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>3 tallies</b> for Zeke when 7 nights reached. Carries over.</div></div>
+    </div></div>
+  </div>
+  <div class="gc" id="gc-r4t">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Dinner without complaining</div><div class="gc-tags"><span class="who wt">Tilly</span><span class="tv">3 tallies at 7 dinners</span></div></div><button class="exp-btn" onclick="exp('r4t')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('r4t')">−</button><div class="bar-wrap" id="dw-r4t"></div><button class="pbtn" onclick="add('r4t')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">Tilly eats without complaining. Silent unhappiness = counts. Asking politely for less = counts.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>3 tallies</b> for Tilly when 7 nights reached. Carries over.</div></div>
+    </div></div>
+  </div>
+
+  <div class="sh">Character Gigs — Zeke</div>
+
+  <div class="gc" id="gc-z1">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">No complaints about school timing</div><div class="gc-tags"><span class="who wz">Zeke</span><span class="tv">3 tallies at 5 mornings</span></div></div><button class="exp-btn" onclick="exp('z1')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('z1')">−</button><div class="dots-wrap" id="dw-z1"></div><button class="pbtn" onclick="add('z1')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">No rushing others, no bossing, no repeated timing questions, no complaints about leave time — that morning.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>3 tallies</b> when 5 clean mornings reached. Energy dump = waiting calmly.</div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-z2">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">"Move first, talk later" — leaves conflict without escalating</div><div class="gc-tags"><span class="who wz">Zeke</span><span class="tv">2 tallies at 3 times</span></div></div><button class="exp-btn" onclick="exp('z2')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('z2')">−</button><div class="dots-wrap" id="dw-z2"></div><button class="pbtn" onclick="add('z2')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">In an escalating situation Zeke <b>physically moves away without being told to,</b> before it becomes unsafe.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>2 tallies</b> when 3 self-initiated moves reached. Most important skill for Zeke.</div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-z3">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Accepts "no" calmly without arguing</div><div class="gc-tags"><span class="who wz">Zeke</span><span class="tv">3 tallies at 5 times</span></div></div><button class="exp-btn" onclick="exp('z3')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('z3')">−</button><div class="dots-wrap" id="dw-z3"></div><button class="pbtn" onclick="add('z3')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">Parent says no. Zeke responds without arguing. <b>Quiet grumpy acceptance = counts.</b></div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>3 tallies</b> when 5 calm acceptances reached. <b>Be generous at first.</b></div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-z4">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Movie night — watches someone else's choice without complaining</div><div class="gc-tags"><span class="who wz">Zeke</span><span class="tv">2 tallies — instant</span></div></div><button class="exp-btn" onclick="exp('z4')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" style="visibility:hidden">−</button><div class="inst-row"></div><button class="pbtn" onclick="ci('z4')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">Not Zeke's turn. Sits and watches <b>without complaining or asking to change it.</b></div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>2 tallies immediately</b> each time completed without complaint.</div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-z5">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Full day without swearing</div><div class="gc-tags"><span class="who wz">Zeke</span><span class="tv">1 tally — instant per day</span></div></div><button class="exp-btn" onclick="exp('z5')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" style="visibility:hidden">−</button><div class="inst-row"></div><button class="pbtn" onclick="ci('z5')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">No swearing from <b>wake-up to lights out.</b> Tap at bedtime if the day was clean.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>1 tally immediately</b> per swear-free day. Adds up fast.</div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-z6">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Kind to a sibling unprompted</div><div class="gc-tags"><span class="who wz">Zeke</span><span class="tv">2 tallies at 3 times</span></div></div><button class="exp-btn" onclick="exp('z6')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('z6')">−</button><div class="dots-wrap" id="dw-z6"></div><button class="pbtn" onclick="add('z6')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">Does something genuinely kind for Tilly, Jett or the 1yo <b>without being asked.</b> When you see it — name it.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>2 tallies</b> when 3 unprompted kind acts reached. Carries over.</div></div>
+    </div></div>
+  </div>
+
+  <div class="sh">Character Gigs — Tilly</div>
+
+  <div class="gc" id="gc-t1">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Showers within 5 mins of being asked</div><div class="gc-tags"><span class="who wt">Tilly</span><span class="tv">3 tallies at 5 nights</span></div></div><button class="exp-btn" onclick="exp('t1')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('t1')">−</button><div class="dots-wrap" id="dw-t1"></div><button class="pbtn" onclick="add('t1')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">In the shower <b>within 5 minutes</b> of being asked. No negotiating. Only tap successful nights.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>3 tallies</b> when 5 nights reached. Missed nights pause. Give <b>10-min warning</b> first.</div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-t2">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">In bed by 8:30pm without reminders</div><div class="gc-tags"><span class="who wt">Tilly</span><span class="tv">2 tallies at 3 nights</span></div></div><button class="exp-btn" onclick="exp('t2')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('t2')">−</button><div class="dots-wrap" id="dw-t2"></div><button class="pbtn" onclick="add('t2')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">In bed by 8:30pm <b>without being chased.</b> Only tap successful nights.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>2 tallies</b> when 3 nights reached. 7:30pm bedroom routine is key.</div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-t3">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Kind to Zeke unprompted</div><div class="gc-tags"><span class="who wt">Tilly</span><span class="tv">2 tallies at 3 times</span></div></div><button class="exp-btn" onclick="exp('t3')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('t3')">−</button><div class="dots-wrap" id="dw-t3"></div><button class="pbtn" onclick="add('t3')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">Does something genuinely kind for Zeke <b>without being asked.</b> Not fighting ≠ being kind.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>2 tallies</b> when 3 kind acts reached. Name it when you see it.</div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-t4">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Accepts "no" calmly without arguing</div><div class="gc-tags"><span class="who wt">Tilly</span><span class="tv">3 tallies at 5 times</span></div></div><button class="exp-btn" onclick="exp('t4')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('t4')">−</button><div class="dots-wrap" id="dw-t4"></div><button class="pbtn" onclick="add('t4')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">Parent says no. Tilly accepts without arguing or crying loudly. <b>Quiet disappointment = fine.</b></div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>3 tallies</b> when 5 calm acceptances reached. <b>Be generous at first.</b></div></div>
+    </div></div>
+  </div>
+
+  <div class="gc" id="gc-t5">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Room reset without reminders</div><div class="gc-tags"><span class="who wt">Tilly</span><span class="tv">3 tallies at 5 days</span></div></div><button class="exp-btn" onclick="exp('t5')">⌄</button></div>
+    <div class="gc-ctr"><div class="ctr-row"><button class="mbtn" onclick="sub('t5')">−</button><div class="dots-wrap" id="dw-t5"></div><button class="pbtn" onclick="add('t5')">+</button></div></div>
+    <div class="gc-detail"><div class="dg">
+      <div class="dc"><div class="dl">What counts</div><div class="dv">5-min room reset done <b>without being reminded.</b> Bed made, floor clear, put away properly.</div></div>
+      <div class="dc"><div class="dl">Tally value</div><div class="dv"><b>3 tallies</b> when 5 days reached. Missed days pause — no penalty.</div></div>
+    </div></div>
+  </div>
+
+  <div class="sh">Custom Tallies</div>
+  <div class="gc" id="gc-cz">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Award custom tally</div><div class="gc-tags"><span class="who wz">Zeke</span><span class="tv">you choose amount</span></div></div></div>
+    <div class="gc-ctr">
+      <div style="padding:0 0 6px"><input id="cdz" type="text" placeholder="What was it for? e.g. Helped unpack groceries" style="width:100%;background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--rs);padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none"></div>
+      <div class="ctr-row">
+        <div style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">Tallies:</div>
+        <input id="caz" type="number" min="1" max="20" value="1" style="width:54px;background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--rs);padding:7px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--accent);text-align:center;outline:none;flex-shrink:0">
+        <div style="flex:1"></div>
+        <button onclick="awardCustom('z')" style="background:var(--accent2);color:#fff;border:none;border-radius:var(--rs);padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Award +</button>
+      </div>
+    </div>
+  </div>
+  <div class="gc" id="gc-ct">
+    <div class="gc-top"><div class="gc-info"><div class="gc-name">Award custom tally</div><div class="gc-tags"><span class="who wt">Tilly</span><span class="tv">you choose amount</span></div></div></div>
+    <div class="gc-ctr">
+      <div style="padding:0 0 6px"><input id="cdt" type="text" placeholder="What was it for? e.g. Tidied without being asked" style="width:100%;background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--rs);padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none"></div>
+      <div class="ctr-row">
+        <div style="font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0">Tallies:</div>
+        <input id="cat" type="number" min="1" max="20" value="1" style="width:54px;background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--rs);padding:7px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--accent);text-align:center;outline:none;flex-shrink:0">
+        <div style="flex:1"></div>
+        <button onclick="awardCustom('t')" style="background:var(--accent2);color:#fff;border:none;border-radius:var(--rs);padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Award +</button>
+      </div>
+    </div>
+  </div>
+
+<div class="sh">Today's Notes for Dad</div>
+  <div class="nb"><div class="nb-title">Mum's daily log — syncs to Dad's phone</div><textarea id="dnote" placeholder="e.g. Zeke left soccer gear in lounge, Tilly showered on time (4 of 5), Jett wiped the table…" oninput="saveNote()"></textarea></div>
+</div>
+
+<!-- ═══ STANDARDS TAB ═══ -->
+<div id="tab-standards" class="pg">
+
+  <div class="day-actions">
+    <button class="day-btn primary" onclick="markDayDone()">✓ Mark today as done</button>
+    <button class="day-btn danger" onclick="confirmReset()">↺ Reset day</button>
+  </div>
+
+  <!-- WEEKLY TRACKER -->
+  <div class="wt-card">
+    <div class="wt-title">Weekly standards tracker</div>
+    <div class="wt-row">
+      <div class="wt-name">Zeke</div>
+      <div class="wt-days" id="wt-z"></div>
+    </div>
+    <div class="wt-row">
+      <div class="wt-name">Tilly</div>
+      <div class="wt-days" id="wt-t"></div>
+    </div>
+    <div class="wt-summary" id="wt-summary"></div>
+  </div>
+
+  <!-- ZEKE STANDARDS -->
+  <div class="std-person" id="sp-z">
+    <div class="std-head">
+      <div class="std-name">Zeke (10)</div>
+      <div class="std-status unmet" id="ss-z">Not yet met</div>
+    </div>
+    <div class="std-items" id="si-z"></div>
+  </div>
+
+  <!-- TILLY STANDARDS -->
+  <div class="std-person" id="sp-t">
+    <div class="std-head">
+      <div class="std-name">Tilly (8)</div>
+      <div class="std-status unmet" id="ss-t">Not yet met</div>
+    </div>
+    <div class="std-items" id="si-t"></div>
+  </div>
+
+
+  <!-- KITCHEN RESET NOTE -->
+  <div class="nb" style="margin-top:4px">
+    <div class="nb-title">Morning kitchen reset — everyone (5 mins)</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.7">Pack dishwasher · Put away breakfast items · Clear and wipe benches and sink · Refill ice · Refill fridge water bottles. <b>This is a standard — not optional.</b></div>
+  </div>
+</div>
+
+<!-- ═══ VAULT TAB ═══ -->
+<div id="tab-vault" class="pg">
+  <div class="sh">Saving toward</div>
+  <div class="vc">
+    <div class="vn">Zeke's Vault</div>
+    <div class="vgr"><div class="vgl">Goal</div><input class="vgi" id="gz" placeholder="e.g. Night fishing (20 tallies)" oninput="saveGoals()"></div>
+    <div class="vp-bg"><div class="vp-fill" id="vfz"></div></div>
+    <div class="vp-txt" id="vtz">0 tallies</div><div class="vp-nxt" id="vnz"></div>
+    <div class="tl">Small — 5 tallies</div>
+    <div class="ti">Choose Friday night dinner (home cooked)</div>
+    <div class="tl">Medium — 10 tallies</div>
+    <div class="ti">Choose family movie night</div>
+    <div class="ti">1:1 outing with Dad</div>
+    <div class="ti">1:1 outing with Mum</div>
+    <div class="tl">Big — 20 tallies</div>
+    <div class="ti">Night fishing trip with Dad</div>
+    <div class="ti">Seafood dinner of his choice</div>
+    <div class="ti">New fishing lure (budget set by parents)</div>
+  </div>
+  <div class="vc">
+    <div class="vn">Tilly's Vault</div>
+    <div class="vgr"><div class="vgl">Goal</div><input class="vgi" id="gt" placeholder="e.g. Craft supplies (20 tallies)" oninput="saveGoals()"></div>
+    <div class="vp-bg"><div class="vp-fill" id="vft"></div></div>
+    <div class="vp-txt" id="vtt">0 tallies</div><div class="vp-nxt" id="vnt"></div>
+    <div class="tl">Small — 5 tallies</div>
+    <div class="ti">Nutella toast treat</div>
+    <div class="ti">Choose Friday night dinner (home cooked)</div>
+    <div class="tl">Medium — 10 tallies</div>
+    <div class="ti">Choose family movie night</div>
+    <div class="ti">Ice cream outing with a parent</div>
+    <div class="ti">New fidget of her choice</div>
+    <div class="tl">Big — 20 tallies</div>
+    <div class="ti">Craft supplies (budget set by parents)</div>
+    <div class="ti">Craft session with Mum or Dad</div>
+    <div class="ti">1:1 outing of her choice</div>
+  </div>
+
+  <div class="vc" style="background:var(--surface2)">
+    <div class="vn">Family Rewards — earned together</div>
+    <div class="ti">Pizza or takeaway night</div>
+    <div class="ti">Movie night with special snacks</div>
+    <div class="ti">Day trip somewhere fun</div>
+    <div class="ti">Backyard campfire + marshmallows</div>
+  </div>
+  <div class="sh">Cash in a reward</div>
+  <div class="vc">
+    <div style="font-size:11.5px;color:var(--text2);margin-bottom:10px;line-height:1.6">Tap when a target is reached. Tallies deducted and logged.</div>
+    <div class="cash-grid">
+      <button class="cash-btn" onclick="cashIn('z',5)">Zeke −5</button>
+      <button class="cash-btn" onclick="cashIn('z',10)">Zeke −10</button>
+      <button class="cash-btn" onclick="cashIn('z',20)">Zeke −20</button>
+      <button class="cash-btn" onclick="cashIn('t',5)">Tilly −5</button>
+      <button class="cash-btn" onclick="cashIn('t',10)">Tilly −10</button>
+      <button class="cash-btn" onclick="cashIn('t',20)">Tilly −20</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LOG TAB ═══ -->
+<div id="tab-log" class="pg">
+  <div class="sh">Gig history</div>
+  <div id="loglist"><div class="empty">No gigs logged yet.<br>Tap + on any gig in the Today tab.</div></div>
+</div>
+
+<!-- ═══ GUIDE TAB ═══ -->
+<div id="tab-guide" class="pg">
+  <div class="gcard">
+    <div class="gtitle">🔥 How to connect Firebase (5 minutes)</div>
+    <div class="gtext">
+      <p><b>Step 1:</b> Go to <b>console.firebase.google.com</b> and sign in with your Google account.</p>
+      <p><b>Step 2:</b> Click "Add project" → name it <b>HodgesHQ</b> → disable Google Analytics → Create project.</p>
+      <p><b>Step 3:</b> Click the web icon <b>(&lt;/&gt;)</b> → register app as "HodgesHQ" → copy the <b>firebaseConfig</b> object shown.</p>
+      <p><b>Step 4:</b> In the left menu go to <b>Build → Realtime Database</b> → Create database → choose your region → Start in test mode → Enable.</p>
+      <p><b>Step 5:</b> Open this HTML file on a computer in a text editor → find the section marked <b>PASTE YOUR FIREBASE CONFIG HERE</b> → replace the placeholder with your config → save.</p>
+      <p><b>Step 6:</b> On both phones — open the file in Chrome → tap the 3-dot menu → <b>Add to Home Screen.</b> Both phones now sync in real time.</p>
+    </div>
+  </div>
+  <div class="gcard">
+    <div class="gtitle">📋 How standards work</div>
+    <div class="gtext">
+      <p><b>Standards tab</b> — tap each item to tick it off as the day progresses. The status badge shows "Standards met ✓" only when every item is ticked.</p>
+      <p><b>Mark today as done</b> — once all standards are met, tap this button to record the day in the weekly tracker. The tracker auto-fills and shows the weekend screen unlock for that week.</p>
+      <p><b>Reset day</b> — clears all ticks ready for the next day. The weekly tracker is not affected by resetting.</p>
+      <p><b>Weekly tracker</b> resets automatically each Monday. The weekend screen unlock summary updates as days are marked.</p>
+    </div>
+  </div>
+  <div class="gcard">
+    <div class="gtitle">📱 How gigs work</div>
+    <div class="gtext">
+      <p><b>+ button</b> records one occurrence. Progress fills toward the target. Tallies only awarded when the full target is hit.</p>
+      <p><b>− button</b> removes the last tap if you tapped by mistake.</p>
+      <p><b>Instant gigs</b> show a confirm dialog before awarding since there's no minus for these.</p>
+      <p><b>Missed days pause progress</b> — they don't reset it. Keep tapping successful days.</p>
+      <p><b>Adding new gigs</b> — come back to Claude and ask. Takes a few minutes, re-download the updated file.</p>
+    </div>
+  </div>
+  <div class="gcard">
+    <div class="gtitle">⚡ Tally targets quick reference</div>
+    <div class="ref-row"><div class="ref-name">Morning routine (both)</div><div class="ref-val">5 days → 5 tallies each</div></div>
+    <div class="ref-row"><div class="ref-name">Sport gear to room (Zeke)</div><div class="ref-val">5 arrivals → 3 tallies</div></div>
+    <div class="ref-row"><div class="ref-name">After-dinner reset (both)</div><div class="ref-val">instant → 1 tally per tap</div></div>
+    <div class="ref-row"><div class="ref-name">Dinner no complaints (both)</div><div class="ref-val">7 nights → 3 tallies each</div></div>
+    <div class="ref-row"><div class="ref-name">No school timing complaints</div><div class="ref-val">5 mornings → 3 tallies</div></div>
+    <div class="ref-row"><div class="ref-name">Move first, talk later</div><div class="ref-val">3 times → 2 tallies</div></div>
+    <div class="ref-row"><div class="ref-name">Accepts no calmly (Zeke)</div><div class="ref-val">5 times → 3 tallies</div></div>
+    <div class="ref-row"><div class="ref-name">Movie night no complaints</div><div class="ref-val">instant → 2 tallies</div></div>
+    <div class="ref-row"><div class="ref-name">Swear-free day</div><div class="ref-val">instant → 1 tally/day</div></div>
+    <div class="ref-row"><div class="ref-name">Kind to sibling (Zeke)</div><div class="ref-val">3 times → 2 tallies</div></div>
+    <div class="ref-row"><div class="ref-name">Shower on time (Tilly)</div><div class="ref-val">5 nights → 3 tallies</div></div>
+    <div class="ref-row"><div class="ref-name">Bed on time (Tilly)</div><div class="ref-val">3 nights → 2 tallies</div></div>
+    <div class="ref-row"><div class="ref-name">Kind to Zeke (Tilly)</div><div class="ref-val">3 times → 2 tallies</div></div>
+    <div class="ref-row"><div class="ref-name">Accepts no calmly (Tilly)</div><div class="ref-val">5 times → 3 tallies</div></div>
+    <div class="ref-row"><div class="ref-name">Room reset (Tilly)</div><div class="ref-val">5 days → 3 tallies</div></div>
+    <div class="ref-row"><div class="ref-name">Jett's star jobs</div><div class="ref-val">instant → 1 smiley · 5 = reward</div></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal"><div class="modal"><div class="modal-title" id="mtitle">Confirm</div><div class="modal-msg" id="mmsg"></div><div class="modal-btns"><button class="modal-btn modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn modal-confirm" id="mok">Confirm</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// PASTE YOUR FIREBASE CONFIG HERE
+// ═══════════════════════════════════════════
+const FB = {
+  apiKey: "AIzaSyBByiBOlhVVkbA7f0m-OsBY6FgexE48eYg",
+  authDomain: "hodgeshq-ac2b5.firebaseapp.com",
+  databaseURL: "https://hodgeshq-ac2b5-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "hodgeshq-ac2b5",
+  storageBucket: "hodgeshq-ac2b5.firebasestorage.app",
+  messagingSenderId: "263026281338",
+  appId: "1:263026281338:web:48739d853abb78bed8a4c3"
+};
+// ═══════════════════════════════════════════
+
+// ── STANDARDS CONFIG ──────────────────────
+const STANDARDS = {
+  z: [
+    { id:'z0',  text:'Make bed' },
+    { id:'z1',  text:'5min room reset' },
+    { id:'z2',  text:'Empty dishwasher', note:'mornings' },
+    { id:'z3',  text:'Bag to room, shoes in box on arrival' },
+    { id:'z4',  text:'Sport gear to room before anything else — always' },
+    { id:'z5',  text:'Empty lunchbox after school' },
+    { id:'z6',  text:'Morning kitchen reset (everyone)' },
+    { id:'z7',  text:'Participate in after-dinner reset' },
+    { id:'z8',  text:'Brush teeth morning and night' },
+    { id:'z9',  text:'Shower when it\'s your turn' },
+    { id:'z10', text:'In bed by 8:30pm when asked — lights out' },
+    { id:'z11', text:'Take clean washing and all belongings from the main house to your room and put away properly' },
+  ],
+  t: [
+    { id:'t0',  text:'Make bed' },
+    { id:'t1',  text:'5min room reset' },
+    { id:'t2',  text:'Chooks — food, water, eggs, rinse scrap bucket' },
+    { id:'t3',  text:'Bag to room, shoes in box on arrival' },
+    { id:'t4',  text:'Empty lunchbox after school' },
+    { id:'t5',  text:'Morning kitchen reset (everyone)' },
+    { id:'t6',  text:'Participate in after-dinner reset' },
+    { id:'t7',  text:'Brush teeth morning and night' },
+    { id:'t8',  text:'Shower when asked' },
+    { id:'t9',  text:'In bed by 8:30pm when asked — lights out' },
+    { id:'t10', text:'Take clean washing and all belongings from the main house to your room and put away properly' },
+  ],
+  j: [
+    { id:'j0', text:'Put plate on bench after meals' },
+    { id:'j1', text:'Put shoes away' },
+    { id:'j2', text:'Help feed Polly and Skipper' },
+    { id:'j3', text:'Put toys in basket' },
+    { id:'j4', text:'Help collect eggs with Tilly' },
+    { id:'j5', text:'Wipe table with cloth after dinner' },
+  ]
+};
+
+const DAYS = ['Mon','Tue','Wed','Thu','Fri'];
+
+// ── GIG CONFIG ────────────────────────────
+const GIGS = {
+  r1z:{t:'c',tgt:5,val:5,who:'z',lbl:'Morning routine (Zeke)',ui:'dots'},
+  r1t:{t:'c',tgt:5,val:5,who:'t',lbl:'Morning routine (Tilly)',ui:'dots'},
+  r2:{t:'c',tgt:5,val:3,who:'z',lbl:'Sport gear to room',ui:'dots'},
+  r3z:{t:'i',val:1,who:'z',lbl:'After-dinner reset (Zeke)'},
+  r3t:{t:'i',val:1,who:'t',lbl:'After-dinner reset (Tilly)'},
+  r4z:{t:'c',tgt:7,val:3,who:'z',lbl:'Dinner no complaints (Zeke)',ui:'bar'},
+  r4t:{t:'c',tgt:7,val:3,who:'t',lbl:'Dinner no complaints (Tilly)',ui:'bar'},
+  z1:{t:'c',tgt:5,val:3,who:'z',lbl:'No school timing complaints',ui:'dots'},
+  z2:{t:'c',tgt:3,val:2,who:'z',lbl:'Move first talk later',ui:'dots'},
+  z3:{t:'c',tgt:5,val:3,who:'z',lbl:'Accepts no calmly (Zeke)',ui:'dots'},
+  z4:{t:'i',val:2,who:'z',lbl:'Movie night no complaints'},
+  z5:{t:'i',val:1,who:'z',lbl:'Swear-free day'},
+  z6:{t:'c',tgt:3,val:2,who:'z',lbl:'Kind to sibling (Zeke)',ui:'dots'},
+  t1:{t:'c',tgt:5,val:3,who:'t',lbl:'Shower on time',ui:'dots'},
+  t2:{t:'c',tgt:3,val:2,who:'t',lbl:'Bed on time',ui:'dots'},
+  t3:{t:'c',tgt:3,val:2,who:'t',lbl:'Kind to Zeke (Tilly)',ui:'dots'},
+  t4:{t:'c',tgt:5,val:3,who:'t',lbl:'Accepts no calmly (Tilly)',ui:'dots'},
+  t5:{t:'c',tgt:5,val:3,who:'t',lbl:'Room reset',ui:'dots'},
+  j1:{t:'i',val:1,who:'j',lbl:'Wipes table'},
+  j2:{t:'i',val:1,who:'j',lbl:'Toys in basket'},
+  j3:{t:'i',val:1,who:'j',lbl:'Carries to help'},
+  j4:{t:'i',val:1,who:'j',lbl:'Waters garden'},
+  j5:{t:'i',val:1,who:'j',lbl:'Shoes away'},
+};
+
+// ── STATE ─────────────────────────────────
+let S = {
+  tallies:{z:0,t:0,j:0},
+  prog:{},
+  log:[],
+  note:'',
+  goals:{z:'',t:''},
+  checks:{z:{},t:{},j:{}},   // daily standard ticks
+  weekly:{z:[0,0,0,0,0], t:[0,0,0,0,0]}, // 0=unset,1=met,2=not met
+};
+let WHO='Mum', db=null, syncT=null, lastSaved='';
+
+// ── FIREBASE ──────────────────────────────
+const fbOK = FB.apiKey && !FB.apiKey.includes('YOUR');
+if(fbOK){
+  const s1=document.createElement('script');
+  s1.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
+  s1.onload=()=>{
+    const s2=document.createElement('script');
+    s2.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
+    s2.onload=()=>{
+      firebase.initializeApp(FB); db=firebase.database(); ss('ok');
+      db.ref('hq5').on('value',snap=>{
+        const d=snap.val();
+        if(d){const inc=JSON.stringify(d);if(inc!==lastSaved){S={...S,...d};lastSaved=inc;renderAll();toast('Updated from other device');}}
+      });
+      loadLocal();
+    };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s1);
+}else{
+  document.getElementById('fbanner').style.display='block';
+  ss('er'); loadLocal();
+}
+
+function loadLocal(){
+  const d=localStorage.getItem('hq5');
+  if(d){try{S={...S,...JSON.parse(d)};}catch(e){}}
+  renderAll();
+}
+
+async function saveData(){
+  const d=JSON.stringify(S);
+  localStorage.setItem('hq5',d);
+  if(db){try{ss('sy');await db.ref('hq5').set(S);lastSaved=d;ss('ok');}catch(e){ss('er');}}
+}
+function sched(){clearTimeout(syncT);syncT=setTimeout(saveData,700);}
+
+function ss(s){
+  const dot=document.getElementById('sdot'),txt=document.getElementById('stxt');
+  dot.className='sdot'+(s==='sy'?' sy':s==='er'?' er':'');
+  txt.textContent=s==='sy'?'Syncing…':s==='er'?(fbOK?'Offline':'No Firebase'):'Synced';
+}
+
+// ── WHO ───────────────────────────────────
+function setWho(w){
+  WHO=w;
+  document.getElementById('wm').classList.toggle('active',w==='Mum');
+  document.getElementById('wd').classList.toggle('active',w==='Dad');
+}
+
+// ── TABS ──────────────────────────────────
+function showTab(n,b){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+n).classList.add('active');
+  b.classList.add('active');
+}
+
+// ── STANDARDS ─────────────────────────────
+function buildStandardsUI(){
+  ['z','t','j'].forEach(who=>{
+    const container=document.getElementById('si-'+who);
+    if(!container)return;
+    container.innerHTML='';
+    STANDARDS[who].forEach(item=>{
+      const ticked=(S.checks[who]&&S.checks[who][item.id])||false;
+      const div=document.createElement('div');
+      div.className='std-item';
+      div.onclick=()=>toggleStd(who,item.id);
+      div.innerHTML=`
+        <div class="std-check${ticked?' ticked':''}"><span class="std-check-icon">✓</span></div>
+        <div><div class="std-text${ticked?' done':''}">${item.text}</div>${item.note?`<div class="std-note">${item.note}</div>`:''}</div>`;
+      container.appendChild(div);
+    });
+    updateStdStatus(who);
+  });
+}
+
+function toggleStd(who,id){
+  if(!S.checks)S.checks={z:{},t:{},j:{}};
+  if(!S.checks[who])S.checks[who]={};
+  S.checks[who][id]=!S.checks[who][id];
+  buildStandardsUI();
+  sched();
+}
+
+function updateStdStatus(who){
+  const items=STANDARDS[who];
+  const checks=S.checks[who]||{};
+  const allDone=items.every(i=>checks[i.id]);
+  const el=document.getElementById('ss-'+who);
+  if(el){
+    el.textContent=allDone?'Standards met ✓':'Not yet met';
+    el.className='std-status '+(allDone?'met':'unmet');
+  }
+}
+
+function isStdMet(who){
+  const items=STANDARDS[who];
+  const checks=S.checks[who]||{};
+  return items.every(i=>checks[i.id]);
+}
+
+// ── WEEKLY TRACKER ────────────────────────
+function getTodayDayIndex(){
+  // 0=Mon...4=Fri, returns -1 if weekend
+  const d=new Date().getDay(); // 0=Sun,1=Mon...6=Sat
+  if(d===0||d===6)return -1;
+  return d-1;
+}
+
+// Check if we need to reset the weekly tracker (new Mon)
+function checkWeeklyReset(){
+  const now=new Date();
+  const mon=getMonday(now).toDateString();
+  if(!S.weekStart||S.weekStart!==mon){
+    S.weekly={z:[0,0,0,0,0],t:[0,0,0,0,0]};
+    S.weekStart=mon;
+  }
+}
+
+function getMonday(d){
+  const dt=new Date(d);
+  const day=dt.getDay();
+  const diff=dt.getDate()-day+(day===0?-6:1);
+  return new Date(dt.setDate(diff));
+}
+
+function markDayDone(){
+  const idx=getTodayDayIndex();
+  const zMet=isStdMet('z'),tMet=isStdMet('t');
+  if(!zMet&&!tMet){toast('Tick off standards first before marking the day done');return;}
+  checkWeeklyReset();
+  if(!S.weekly)S.weekly={z:[0,0,0,0,0],t:[0,0,0,0,0]};
+  const dayIdx=idx>=0?idx:0;
+  if(zMet)S.weekly.z[dayIdx]=1;
+  if(tMet)S.weekly.t[dayIdx]=1;
+  buildWeeklyTracker();
+  sched();
+  toast('Day marked! '+(zMet&&tMet?'Both Zeke and Tilly':zMet?'Zeke':'Tilly')+' standards recorded ✓');
+}
+
+function toggleWeekDay(who,idx){
+  checkWeeklyReset();
+  if(!S.weekly)S.weekly={z:[0,0,0,0,0],t:[0,0,0,0,0]};
+  S.weekly[who][idx]=S.weekly[who][idx]===1?0:1;
+  buildWeeklyTracker();
+  sched();
+}
+
+function buildWeeklyTracker(){
+  checkWeeklyReset();
+  ['z','t'].forEach(who=>{
+    const container=document.getElementById('wt-'+who);
+    if(!container)return;
+    container.innerHTML='';
+    const days=S.weekly[who]||[0,0,0,0,0];
+    DAYS.forEach((day,i)=>{
+      const met=days[i]===1;
+      const div=document.createElement('div');
+      div.className='wt-day';
+      div.innerHTML=`<div class="wt-day-lbl">${day}</div><div class="wt-box${met?' met':''}" onclick="toggleWeekDay('${who}',${i})">${met?'✓':''}</div>`;
+      container.appendChild(div);
+    });
+  });
+  buildWeeklySummary();
+}
+
+function buildWeeklySummary(){
+  const el=document.getElementById('wt-summary');
+  if(!el)return;
+  checkWeeklyReset();
+  const zDays=(S.weekly.z||[]).filter(d=>d===1).length;
+  const tDays=(S.weekly.t||[]).filter(d=>d===1).length;
+
+  function unlockText(days,name){
+    if(days<=2)return name+': '+days+'/5 — no weekend access yet';
+    if(days===3)return name+': '+days+'/5 — 1 session Sat';
+    if(days===4)return name+': '+days+'/5 — 2 sessions Sat+Sun';
+    return name+': 5/5 ✓ — all 3 sessions + bonus';
+  }
+
+  el.innerHTML=`
+    <div class="wt-summary-row"><div class="wt-summary-name">Zeke this week</div><div class="wt-summary-val">${zDays}/5 days</div></div>
+    <div class="wt-unlock" style="margin-bottom:6px">${getUnlockLabel(zDays,'PlayStation')}</div>
+    <div class="wt-summary-row"><div class="wt-summary-name">Tilly this week</div><div class="wt-summary-val">${tDays}/5 days</div></div>
+    <div class="wt-unlock">${getUnlockLabel(tDays,'iPad')}</div>`;
+}
+
+function getUnlockLabel(days,device){
+  if(days<=2)return`→ ${device}: no weekend access`;
+  if(days===3)return`→ ${device}: 1 session unlocked (Saturday)`;
+  if(days===4)return`→ ${device}: 2 sessions unlocked (Sat + Sun)`;
+  return`→ ${device}: all 3 sessions unlocked + bonus 🎉`;
+}
+
+function confirmReset(){
+  showModal('Reset today?','This clears all of today\'s standard ticks. The weekly tracker is not affected.',()=>{
+    S.checks={z:{},t:{},j:{}};
+    buildStandardsUI();
+    sched();
+    toast('Day reset — ready for tomorrow');
+  });
+}
+
+// ── GIGS ──────────────────────────────────
+function add(id){
+  const g=GIGS[id];
+  if(!S.prog)S.prog={};
+  if(!S.prog[id])S.prog[id]=0;
+  if(S.prog[id]>=g.tgt)return;
+  S.prog[id]++;
+  if(S.prog[id]>=g.tgt){
+    award(g.who,g.val);
+    addLog(g.lbl+' ✓ ('+g.tgt+'/'+g.tgt+')',g.who,g.val);
+    toast('🎉 '+g.lbl+'! '+tmsg(g.who,g.val));
+    S.prog[id]=0;
+    const el=document.getElementById('gc-'+id);
+    el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),600);
+  }else{
+    const rem=g.tgt-S.prog[id];
+    toast(S.prog[id]+'/'+g.tgt+' — '+rem+' more to go');
+  }
+  rgig(id);updT();updV();renderLog();sched();
+}
+
+function sub(id){
+  if(!S.prog||!S.prog[id]||S.prog[id]<=0){toast('Already at zero');return;}
+  S.prog[id]--;
+  toast('Removed 1 from '+GIGS[id].lbl);
+  rgig(id);sched();
+}
+
+let pendCI=null;
+function ci(id){
+  const g=GIGS[id];
+  const nm={z:'Zeke',t:'Tilly',b:'Zeke and Tilly',j:'Jett'};
+  pendCI=id;
+  showModal('Award '+(g.who==='j'?'smiley':'tally')+'?',
+    'Award '+g.val+' '+(g.who==='j'?'smiley':'tally')+(g.val>1?'s':'')+' to '+nm[g.who]+' for: '+g.lbl+'?',
+    ()=>{
+      const gg=GIGS[pendCI];
+      award(gg.who,gg.val);addLog(gg.lbl,gg.who,gg.val);
+      toast(tmsg(gg.who,gg.val));updT();updV();renderLog();sched();pendCI=null;
+    });
+}
+
+function award(who,n){
+  if(!S.tallies)S.tallies={z:0,t:0,j:0};
+  if(who==='b'){S.tallies.z=(S.tallies.z||0)+n;S.tallies.t=(S.tallies.t||0)+n;}
+  else S.tallies[who]=(S.tallies[who]||0)+n;
+}
+
+function tmsg(who,n){
+  const nm={z:'Zeke',t:'Tilly',b:'Zeke + Tilly',j:'Jett'};
+  const u=who==='j'?'smiley':'tally';
+  return'+'+n+' '+(n===1?u:u+'s')+' for '+nm[who];
+}
+
+function addLog(lbl,who,val){
+  const nm={z:'Zeke',t:'Tilly',b:'Zeke + Tilly',j:'Jett'};
+  const d=new Date();
+  const ds=d.toLocaleDateString('en-AU',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+  if(!S.log)S.log=[];
+  S.log.unshift({lbl,who:nm[who],val,date:ds,by:WHO});
+  if(S.log.length>150)S.log=S.log.slice(0,150);
+}
+
+function renderLog(){
+  const el=document.getElementById('loglist');
+  if(!S.log||!S.log.length){el.innerHTML='<div class="empty">No gigs logged yet.<br>Tap + on any gig to get started.</div>';return;}
+  el.innerHTML=S.log.map(e=>{
+    const pos=e.val>0,sml=e.who==='Jett'&&pos;
+    const cls=sml?'sm':pos?'pos':'neg';
+    return`<div class="log-row"><div><div class="lr-name">${e.lbl}</div><div class="lr-meta">${e.who} · ${e.date}${e.by?' · '+e.by:''}</div></div><div class="lr-badge ${cls}">${pos?'+':''}${e.val}${sml?' ⭐':' ✓'}</div></div>`;
+  }).join('');
+}
+
+function cashIn(who,amt){
+  const c=(S.tallies&&S.tallies[who])||0;
+  const nm={z:'Zeke',t:'Tilly',j:'Jett'},u=who==='j'?'smileys':'tallies';
+  if(c<amt){toast('Not enough '+u+' yet ('+c+' of '+amt+')');return;}
+  showModal('Cash in reward?','Deduct '+amt+' '+u+' from '+nm[who]+'?',()=>{
+    S.tallies[who]-=amt;addLog('Reward cashed in',who,-amt);
+    updT();updV();renderLog();sched();toast('✓ Reward cashed in for '+nm[who]);
+  });
+}
+
+function rgig(id){
+  const g=GIGS[id];if(g.t==='i')return;
+  const c=(S.prog&&S.prog[id])||0;
+  if(g.ui==='dots'){
+    const w=document.getElementById('dw-'+id);if(!w)return;
+    w.innerHTML='';
+    for(let i=0;i<g.tgt;i++){
+      const d=document.createElement('div');
+      d.className='dot'+(i<c?(c>=g.tgt?' done':' filled'):'');
+      w.appendChild(d);
+    }
+  }else{
+    const w=document.getElementById('dw-'+id);if(!w)return;
+    const pct=Math.min(100,Math.round((c/g.tgt)*100));
+    const done=c>=g.tgt;
+    w.innerHTML=`<div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div><div class="bar-lbl${done?' done':''}">${c}/${g.tgt}${done?' ✓':''}</div>`;
+  }
+}
+
+function updT(){
+  const t=S.tallies||{z:0,t:0,j:0};
+  const elz=document.getElementById('tcz');if(elz)elz.textContent=t.z||0;
+  const elt=document.getElementById('tct');if(elt)elt.textContent=t.t||0;
+  const thr=[5,10,20];
+  ['z','t'].forEach(w=>{
+    const c=t[w]||0,nx=thr.find(x=>x>c);
+    const el=document.getElementById('tn'+w);
+    if(el)el.textContent=nx?(nx-c)+' to '+(nx===5?'small':nx===10?'medium':'big'):'🎉 big reached!';
+  });
+}
+
+function saveGoals(){
+  if(!S.goals)S.goals={};
+  const sgz=document.getElementById('gz');if(sgz)S.goals.z=sgz.value;
+  const sgt=document.getElementById('gt');if(sgt)S.goals.t=sgt.value;
+  updV();sched();
+}
+
+function updV(){
+  ['z','t'].forEach(w=>{
+    const gi=document.getElementById('g'+w);
+    const gt=(S.goals&&S.goals[w])||'';
+    if(gi)gi.value=gt;
+    const m=gt.match(/(\d+)/),tgt=m?parseInt(m[1]):20;
+    const c=(S.tallies&&S.tallies[w])||0;
+    const pct=Math.min(100,Math.round((c/tgt)*100));
+    const bar=document.getElementById('vf'+w),lbl=document.getElementById('vt'+w),nxt=document.getElementById('vn'+w);
+    if(bar)bar.style.width=pct+'%';
+    if(lbl)lbl.textContent=c+' / '+tgt+' tallies ('+pct+'%)';
+    if(nxt){
+      const rem=tgt-c;
+      nxt.textContent=rem>0?rem+' more tally'+(rem===1?'':'s')+' to reach goal':'🎉 Goal reached! Cash in above.';
+      nxt.style.color=rem<=0?'var(--green)':'var(--text3)';
+    }
+  });
+}
+
+function saveNote(){S.note=document.getElementById('dnote').value;sched();}
+function exp(id){document.getElementById('gc-'+id).classList.toggle('open');}
+
+let mCb=null;
+function showModal(title,msg,cb){
+  document.getElementById('mtitle').textContent=title;
+  document.getElementById('mmsg').textContent=msg;
+  document.getElementById('mok').onclick=()=>{closeModal();cb();};
+  document.getElementById('modal').classList.add('show');mCb=cb;
+}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+
+let tT;
+function toast(m){
+  const el=document.getElementById('toast');
+  el.textContent=m;el.classList.add('show');
+  clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('show'),2600);
+}
+
+
+function awardCustom(who){
+  const descEl=document.getElementById('custom-desc-'+who);
+  const amtEl=document.getElementById('custom-amt-'+who);
+  const desc=descEl.value.trim();
+  const amt=parseInt(amtEl.value)||1;
+  const nm={z:'Zeke',t:'Tilly'};
+  if(!desc){toast('Please describe what it was for first');descEl.focus();return;}
+  if(amt<1||amt>20){toast('Amount must be between 1 and 20');return;}
+  showModal(
+    'Award custom tally?',
+    'Award '+amt+' tally'+(amt===1?'':'s')+' to '+nm[who]+' for:\n"'+desc+'"',
+    ()=>{
+      award(who,amt);
+      addLog('Custom: '+desc,who,amt);
+      toast('+'+amt+' tally'+(amt===1?'':'s')+' awarded to '+nm[who]);
+      descEl.value='';
+      amtEl.value='1';
+      updT();updV();renderLog();sched();
+    }
+  );
+}
+
+function awardCustom(who){
+  const nm={z:'Zeke',t:'Tilly'};
+  const descEl=document.getElementById('cd'+who);
+  const amtEl=document.getElementById('ca'+who);
+  const desc=(descEl&&descEl.value)||'';
+  const amt=parseInt((amtEl&&amtEl.value)||1);
+  if(!desc.trim()){toast('Please describe what it was for first');if(descEl)descEl.focus();return;}
+  if(isNaN(amt)||amt<1||amt>20){toast('Amount must be between 1 and 20');return;}
+  showModal(
+    'Award custom tally?',
+    'Award '+amt+' tally'+(amt===1?'':'s')+' to '+nm[who]+' for: "'+desc.trim()+'"',
+    ()=>{
+      award(who,amt);
+      addLog('Custom tally: '+desc.trim(),who,amt);
+      toast('+'+amt+' tally'+(amt===1?'':'s')+' awarded to '+nm[who]);
+      if(descEl)descEl.value='';
+      if(amtEl)amtEl.value='1';
+      updT();updV();renderLog();sched();
+    }
+  );
+}
+
+function renderAll(){
+  Object.keys(GIGS).forEach(id=>rgig(id));
+  updT();updV();renderLog();
+  buildStandardsUI();
+  buildWeeklyTracker();
+  const n=document.getElementById('dnote');if(n&&S.note)n.value=S.note;
+  const gz=document.getElementById('gz');if(gz&&S.goals&&S.goals.z)gz.value=S.goals.z;
+  const gt=document.getElementById('gt');if(gt&&S.goals&&S.goals.t)gt.value=S.goals.t;
+}
+
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+</script>
+</body>
+</html>
